@@ -3,7 +3,13 @@ import React from "react";
 import { styles } from "./styles";
 
 const Input = ({ ...rest }: TextInputProps) => {
-  return <TextInput style={styles.container} {...rest} />;
+  return (
+    <TextInput
+      style={styles.container}
+      placeholderTextColor="#74798B"
+      {...rest}
+    />
+  );
 };
 
 export default Input;
