@@ -12,15 +12,16 @@ import Input from "@/components/Input";
 import Filter from "@/components/Filter";
 import { FilterStatus } from "@/types/FilterStatus";
 import { Item } from "@/components/Item";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { addItem, getItems, ItemStorage } from "@/storage/itemsStorage";
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE];
 export function Home() {
-  const [items, setItems] = useState<any>([]);
+  const [items, setItems] = useState<ItemStorage[]>([]);
   const [filter, setFilter] = useState(FilterStatus.PENDING);
   const [description, setDescription] = useState("");
 
-  function handleAdd() {
+  async function handleAdd() {
     if (!description.trim()) {
       return Alert.alert("Adicionar", "Informe a descrição para adicionar.");
     }
@@ -30,9 +31,23 @@ export function Home() {
       description,
       status: FilterStatus.PENDING,
     };
-
-    setItems([...items, newItem]);
+    await addItem(newItem);
+    await getItemsData();
   }
+
+  const getItemsData = async () => {
+    try {
+      const response = await getItems();
+      setItems(response);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "error get when getting items data");
+    }
+  };
+
+  useEffect(() => {
+    getItemsData();
+  }, []);
 
   return (
     <View style={styles.container}>
