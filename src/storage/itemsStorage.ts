@@ -36,7 +36,21 @@ const saveItems = async (items: ItemStorage[]): Promise<void> => {
 
 export const addItem = async (newItem: ItemStorage): Promise<ItemStorage[]> => {
   const items = await getItems();
-  const updateItems = [...items, newItem];
-  await saveItems(updateItems);
-  return updateItems;
+  const updatedItems = [...items, newItem];
+  await saveItems(updatedItems);
+  return updatedItems;
+};
+
+export const removeItem = async (itemId: string): Promise<void> => {
+  const items = await getItems();
+  const uptatedItems = items.filter((item) => item.id !== itemId);
+  await saveItems(uptatedItems);
+};
+
+export const clearItems = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(ITEMS_STORAGE_KEY);
+  } catch (error) {
+    throw new Error("CLEAR_ITEMS " + error);
+  }
 };

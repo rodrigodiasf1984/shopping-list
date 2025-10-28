@@ -13,7 +13,12 @@ import Filter from "@/components/Filter";
 import { FilterStatus } from "@/types/FilterStatus";
 import { Item } from "@/components/Item";
 import { useEffect, useState } from "react";
-import { addItem, getItemsByStatus, ItemStorage } from "@/storage/itemsStorage";
+import {
+  addItem,
+  getItemsByStatus,
+  ItemStorage,
+  removeItem,
+} from "@/storage/itemsStorage";
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE];
 
@@ -39,6 +44,16 @@ export function Home() {
     setDescription("");
   }
 
+  async function handleRemove(itemId: string) {
+    try {
+      await removeItem(itemId);
+      await getFilteredItems();
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Remove", "An error ocurred while removing");
+    }
+  }
+
   const getFilteredItems = async () => {
     try {
       const response = await getItemsByStatus(filter);
@@ -48,6 +63,10 @@ export function Home() {
       Alert.alert("Error", "error get when getting items data");
     }
   };
+
+  function handleClear() {
+    Alert.alert("Clear", "Are you sure you want to delete all items?");
+  }
 
   useEffect(() => {
     getFilteredItems();
@@ -74,7 +93,7 @@ export function Home() {
               onPress={() => setFilter(status)}
             />
           ))}
-          <TouchableOpacity style={styles.clearButton}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Limpar</Text>
           </TouchableOpacity>
         </View>
@@ -88,7 +107,7 @@ export function Home() {
           )}
           renderItem={({ item }) => (
             <Item
-              onRemove={() => console.log("remove")}
+              onRemove={() => handleRemove(item.id)}
               onStatus={() => console.log("mudar o status")}
               data={item}
             />
