@@ -13,14 +13,10 @@ import Filter from "@/components/Filter";
 import { FilterStatus } from "@/types/FilterStatus";
 import { Item } from "@/components/Item";
 import { useEffect, useState } from "react";
-import {
-  addItem,
-  getItems,
-  getItemsByStatus,
-  ItemStorage,
-} from "@/storage/itemsStorage";
+import { addItem, getItemsByStatus, ItemStorage } from "@/storage/itemsStorage";
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE];
+
 export function Home() {
   const [items, setItems] = useState<ItemStorage[]>([]);
   const [filter, setFilter] = useState(FilterStatus.PENDING);
@@ -38,6 +34,9 @@ export function Home() {
     };
     await addItem(newItem);
     await getFilteredItems();
+    setFilter(FilterStatus.PENDING);
+    Alert.alert("Added", `Item added ${description}`);
+    setDescription("");
   }
 
   const getFilteredItems = async () => {
@@ -61,6 +60,7 @@ export function Home() {
         <Input
           placeholder="add an item to the list"
           onChangeText={setDescription}
+          value={description}
         />
         <Button title="Add" onPress={handleAdd} />
       </View>
