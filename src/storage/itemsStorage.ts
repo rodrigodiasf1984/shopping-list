@@ -19,7 +19,7 @@ export const getItems = async (): Promise<ItemStorage[]> => {
   }
 };
 
-export const getItemByStatus = async (
+export const getItemsByStatus = async (
   status: FilterStatus
 ): Promise<ItemStorage[]> => {
   const items = await getItems();

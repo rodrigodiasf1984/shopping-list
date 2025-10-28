@@ -13,7 +13,12 @@ import Filter from "@/components/Filter";
 import { FilterStatus } from "@/types/FilterStatus";
 import { Item } from "@/components/Item";
 import { useEffect, useState } from "react";
-import { addItem, getItems, ItemStorage } from "@/storage/itemsStorage";
+import {
+  addItem,
+  getItems,
+  getItemsByStatus,
+  ItemStorage,
+} from "@/storage/itemsStorage";
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE];
 export function Home() {
@@ -32,12 +37,12 @@ export function Home() {
       status: FilterStatus.PENDING,
     };
     await addItem(newItem);
-    await getItemsData();
+    await getFilteredItems();
   }
 
-  const getItemsData = async () => {
+  const getFilteredItems = async () => {
     try {
-      const response = await getItems();
+      const response = await getItemsByStatus(filter);
       setItems(response);
     } catch (error) {
       console.log(error);
@@ -46,8 +51,8 @@ export function Home() {
   };
 
   useEffect(() => {
-    getItemsData();
-  }, []);
+    getFilteredItems();
+  }, [filter]);
 
   return (
     <View style={styles.container}>
